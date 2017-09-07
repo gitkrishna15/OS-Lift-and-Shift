@@ -5,7 +5,7 @@ Who can benefit/leverage?
 
 The below process will help in guiding you any Operating system Workload to Oracle Public Cloud.
 
-If you have a Application/Server which is old/new and you find it uncomfortable/lengthy to shift it to cloud the traditional way, this process will help you image your OS and move to oracle cloud (IaaS) with everything in place as it is.
+If you have a Application/Server which is old/new and you find it uncomfortable/lengthy to shift it to cloud the traditional way, this process will help you image your Operating System and move to oracle cloud (IaaS) with everything in place as it is.
 
 Sucessfully Tested under below Environment:
 
@@ -14,6 +14,8 @@ Sucessfully Tested under below Environment:
  2:  Tested and updated script to work only on EL 6 and EL 7
  
  3:  Considered Network-Adapter to have boot PROTOCOL as DHCP and adapter type as Ethernet
+ 
+ 4:  Execute the shared scripts from OS Console, as change in network file could disconnect a ssh connection and would require to start the adapter manually from console.
 
 High Level Explaination of the Entire Process
 
@@ -25,7 +27,7 @@ As part of the Pre-steps,
 
 Shutdown any services running on the server (application/DB)
 
-Execute the script to take care of all below steps part of STEP 1:
+Execute the script ( "OS_lift_shift_prep.sh" - note to keep the env file "OS_lift_shift_setenv.env" in same directory as the prep-script ) to take care of all below steps of STEP 1:
 
 Create an OPC user ( for future enhancement )
 
@@ -44,12 +46,16 @@ This step would require space (same as the size of disk to store the raw image a
 Option 1:
 
 Make sure you have enough space on your Windows Workstation ( if required plugin External Hardrive for the space required)
+Install Git Bash/Cygwin/Open Shh Terminal which would provide execution of linux commands on Windows system.
+Once installed execute the below script using this bash terminal on windows machine.
 
-Execute the Script provided which will create the raw image and prepare tar.gz image
+Execute the Script ( "OS_lift_shift_image.sh" ) provided which will create the raw image and prepare tar.gz image
 
 Option 2:
 
 If enough space on separate disk/LUN is available in Source OS, continue to execute the script with correct option
+dd if=/dev/sda of=/u01/diskimage.raw bs=8M
+tar /u01/diskimage.raw.tar.gz /u01/diskimage.raw
 
 Once the image tar.gz file is available use any of the tools(WinSCP/Filezilla/scp) to copy the image over to System/Server where GUI browser is available to upload the image to Oracle Cloud
 
