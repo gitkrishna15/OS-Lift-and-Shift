@@ -1,6 +1,8 @@
 # OS-Lift-and-Shift
 Lift and Shift any OS workload to Oracle Cloud (IaaS)
 
+Note: An older version with all details in attached as Ver1, please check if preferred
+
 Who can benefit/leverage?
 
 The below process will help in guiding you any Operating system Workload to Oracle Public Cloud.
@@ -15,7 +17,6 @@ Sucessfully Tested under below Environment:
  
  3:  Considered Network-Adapter to have boot PROTOCOL as DHCP and adapter type as Ethernet
  
- 4:  Execute the shared scripts from OS Console, as change in network file could disconnect a ssh connection and would require to start the adapter manually from console.
 
 High Level Explaination of the Entire Process
 
@@ -27,17 +28,30 @@ As part of the Pre-steps,
 
 Shutdown any services running on the server (application/DB)
 
-Execute the script ( "OS_lift_shift_prep.sh" - note to keep the env file "OS_lift_shift_setenv.env" in same directory as the prep-script ) to take care of all below steps of STEP 1:
+Download the OS_lift_shift_package.zip from the uploaded files
 
-Create an OPC user ( for future enhancement )
+Unzip the folder on the server where desired,it provides 3 files (OS_lift_shift_all.zip,OS_lift_shift_boot.sh,OS_lift_shift_image.sh)
 
-Disbale Firewall for the time the process in running
-
-Make changes to Network components which would help in bringing the system up in Cloud Infrastrucure
-
-Backup all files affected in the process for easy rollback
 
 STEP 2:
+
+Execute the script ( "OS_lift_shift_boot.sh" ), this script will ask for the path where the file (OS_lift_shift_all.zip) is present
+
+This script will unzip the zile file and create backup directory in it.
+
+IF Version of OS is 7 then below will get done:
+
+ It then creates a service file which would get executed in boot ( when image is brought up in cloud )
+ 
+ Registers the service for boot execution
+ 
+ Prepares the boot images with added xen plugins to bring OS up in cloud without issue
+ 
+IF Version of OS is 6 then it places the prep script ( OS_lift_shift_prep.sh ) in /etc/init.d for boot execution
+
+Once executed, we move on to next step.
+ 
+STEP 3:
 
 The next stage of the process is to create a raw image of the entire disk and compress it to tar.gz format
 
@@ -60,13 +74,13 @@ tar /u01/diskimage.raw.tar.gz /u01/diskimage.raw
 Once the image tar.gz file is available use any of the tools(WinSCP/Filezilla/scp) to copy the image over to System/Server where GUI browser is available to upload the image to Oracle Cloud
 
 
-STEP 3:
+STEP 4:
 
-Once the image is created and moved. Go back to source server and run the script in Step 1 with input parameter as "rollback"
+Once the image is created and moved. Go back to source server and run the script in Step 1 ( OS_lift_shift_boot.sh ) with input parameter as "rollback"
 This will rollback all changes
 
 
-STEP 4:
+STEP 5:
 
 Once the image file is available.
 
@@ -118,7 +132,7 @@ Check the status and Public IP for it
 
 Note the Public IP for the Server
 
-STEP 5:
+STEP 6:
 
 Open Putty and provide the Public IP address
 
@@ -128,6 +142,19 @@ open the connection and login using the account used previously
 
 
 Performing all above steps will result with your server in Cloud.
+
+What happens at time of boot in cloud as part of OS_lift_shift_prep.sh script?
+It takes care of all below steps:
+
+Create an OPC user ( for future enhancement )
+
+Disbale Firewall for the time the process in running
+
+Make changes to Network components which would help in bringing the system up in Cloud Infrastrucure
+
+Backup all files affected in the process for easy rollback
+
+
 
 We are working to test the same on Other Operating System Versions and incorporate more options in future.
 This is a test case which resulted sucessfully for us, please feel free to test it out but with care.
